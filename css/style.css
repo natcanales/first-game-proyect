@@ -2,3 +2,9 @@
     margin: 0;
     padding: 0;
 }
+
+#canvas {
+    background-image: url("../img/bgc.png");
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
