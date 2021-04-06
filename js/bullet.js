@@ -10,6 +10,7 @@ class Bullet {
             h: 10
         }
         this.velY = 20;
+        this.toDelete = false;
     }
 
     drawBullet() {
