@@ -1,5 +1,5 @@
 const game = {
-    title: "",
+    title: "UFO Hunter",
     author: "Jose y Nat",
     license: undefined,
     version: '1.0.0',
@@ -12,7 +12,10 @@ const game = {
     player: undefined,
     characterArr: [],
     bullets: [],
+    explosions: [],
     frames: 0,
+    time: undefined,
+
 
     init() {
         this.canvasDom = document.getElementById("canvas");
@@ -20,19 +23,26 @@ const game = {
         this.setDimensions();
         this.setEventListeners();
         this.createPlayer();
+        this.startTime();
         this.start();
     },
 
     start() {
         setInterval(() => {
-            this.frames++;
             this.clearAll()
-            this.frames % 30 === 0 ? this.createCharacter() : null;
+            this.frames++;
+            this.frames % 20 === 0 ? this.createCharacter() : null;
+            this.frames % 20 === 0 ? this.time.getTime() : null;
             this.drawAll()
+            this.explosions.forEach(exp => exp.drawExplosion())
             this.moveChars()
             this.isCollision()
             this.reset()
         }, 50)
+    },
+
+    startTime() {
+        this.time = new Time(this.frames);
     },
 
     drawAll() {
@@ -42,21 +52,22 @@ const game = {
     },
 
     reset() {
-        for (let i = 0; i < this.characterArr.length; i++) {
-            let char = this.characterArr[i]
-            if ((char.position.x >= this.canvasSize.w) || (char.position.x < 0)) {
-                this.characterArr.splice(i, 1);
+        this.characterArr = this.characterArr.filter((char, i) => {
+            if (!char.exploding && (char.position.x <= this.canvasSize.w) && (char.position.x > 0)) {
+                return true
             }
+        })
+        this.explosions = this.explosions.filter((elm) => elm.finished === undefined) //filter
+        let char
+        for (let i = 0; i < this.characterArr.length; i++) {
+            char = this.characterArr[i];
 
             if (char.toDelete === true) {
-                char.imageInstance = new Image();
-                char.imageInstance.src = "img/explosion08.png";
+                this.explosions.push(new Explosion(this.ctx, char.position));
                 char.vel = 0;
                 if (char.exploding === undefined) {
+                    char.toDelete = false
                     char.exploding = true
-                    setTimeout(() => {
-                        this.characterArr.splice(i, 1);
-                    }, 350);
                 }
             }
         }
@@ -78,7 +89,7 @@ const game = {
 
     setEventListeners() {
         document.onkeydown = e => {
-            e.key === "ArrowLeft" ? this.player.moveLeft() : null;
+            e.key === "ArrowLeft" ? this.player.moveLeft() : null
             e.key === "ArrowRight" ? this.player.moveRight() : null;
             e.code === "Space" ? this.createBullets() : null;
         }
@@ -101,6 +112,7 @@ const game = {
         this.characterArr.push(character);
 
     },
+
 
     moveChars() {
         this.characterArr.forEach(elem => {
@@ -139,11 +151,6 @@ const game = {
             }
         }
     }
-    /*if () {
-                        
-                    }*/
-    /* bullet.bulletPos.x + bullet.bulletSize.w >= character.position.x &&
-    bullet.bulletPos.y + bullet.bulletSize.h >= character.position.y &&
-    bullet.bulletPos.x <= character.position.x + character.characterSize.w */
+
 
 }

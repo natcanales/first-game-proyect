@@ -9,7 +9,7 @@ class Bullet {
             w: 10,
             h: 10
         }
-        this.velY = 20;
+        this.velY = 30;
         this.toDelete = false;
     }
 
