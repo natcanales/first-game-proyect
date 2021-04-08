@@ -11,6 +11,7 @@ let meow = new Audio("sounds/meow.mp3");
 let reload = new Audio("sounds/reload.mp3");
 let gameover = new Audio("sounds/gameover.mp3");
 let explosion = new Audio("sounds/explosion.mp3");
+let scream = new Audio("sounds/scream.mp3");
 
 function startGame() {
     game.init("canvas");
@@ -29,7 +30,10 @@ function pauseBGMusic() {
 }
 
 function playGameOver() {
-    gameover.play();
+    meow.pause();
+    scream.play();
+    setTimeout(() => gameover.play(), 1000);
+
 }
 
 function playMeow() {
@@ -43,6 +47,7 @@ function playReload() {
 function playExplosion() {
     explosion.play();
 }
+
 
 function printTime() {
     printMinutes();
