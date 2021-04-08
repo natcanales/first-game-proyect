@@ -12,9 +12,11 @@ const game = {
     player: undefined,
     characterArr: [],
     bullets: [],
+    remainingBullets: 100,
     explosions: [],
     frames: 0,
     time: undefined,
+    score: 0,
 
 
     init() {
@@ -25,15 +27,17 @@ const game = {
         this.createPlayer();
         this.startTime();
         this.start();
+        printLifes();
     },
 
     start() {
-        setInterval(() => {
+        this.intervalID = setInterval(() => {
             this.clearAll()
             this.frames++;
             this.frames % 20 === 0 ? this.createCharacter() : null;
-            this.frames % 20 === 0 ? this.time.getTime() : null;
+            this.frames % 20 === 0 ? this.time.increaseTime() : null;
             this.drawAll()
+            this.player.lifes === 0 ? this.gameOver() : null;
             this.explosions.forEach(exp => exp.drawExplosion())
             this.moveChars()
             this.isCollision()
@@ -42,13 +46,14 @@ const game = {
     },
 
     startTime() {
-        this.time = new Time(this.frames);
+        this.time = new Time();
     },
 
     drawAll() {
         this.player.drawPlayer()
-        this.characterArr.forEach(elm => elm.drawCharacter())
-        this.bullets.forEach(elm => elm.drawBullet())
+        this.characterArr.forEach(elm => elm.drawCharacter());
+        this.bullets.forEach(elm => elm.drawBullet());
+        printTime();
     },
 
     reset() {
@@ -72,12 +77,13 @@ const game = {
             }
         }
 
-        for (let i = 0; i < this.bullets.length; i++) {
-            let bullet = this.bullets[i];
-            if ((bullet.bulletPos.y < 0) || (bullet.toDelete === true)) {
-                this.bullets.splice(i, 1);
-            }
-        }
+        this.bullets = this.bullets.filter((elem) => !elem.toDelete)
+        // for (let i = 0; i < this.bullets.length; i++) {
+        //     let bullet = this.bullets[i];
+        //     if ((bullet.bulletPos.y < 0) || (bullet.toDelete === true)) {
+        //         this.bullets.splice(i, 1);
+        //     }
+        // }
     },
 
     setDimensions() {
@@ -91,7 +97,14 @@ const game = {
         document.onkeydown = e => {
             e.key === "ArrowLeft" ? this.player.moveLeft() : null
             e.key === "ArrowRight" ? this.player.moveRight() : null;
-            e.code === "Space" ? this.createBullets() : null;
+        }
+
+        document.onkeyup = e => {
+            if (e.code === "Space") {
+                this.createBullets();
+                this.remainingBullets--
+                printBullets();
+            }
         }
     },
 
@@ -104,13 +117,13 @@ const game = {
         return arr[result];
     },
 
+
     createCharacter() {
         const initPosY = this.randomize([this.canvasSize.h * .05, this.canvasSize.h * .25]);
         const initPosX = this.randomize([this.canvasSize.w, 0]);
         const character = new Characters(this.ctx, this.canvasSize, initPosY, initPosX);
-
+        character.characterType();
         this.characterArr.push(character);
-
     },
 
 
@@ -128,29 +141,48 @@ const game = {
         this.bullets.push(new Bullet(this.ctx, this.canvasSize, this.player.playerSize, this.player.playerPos));
     },
 
-
-
-
     clearAll() {
         this.ctx.clearRect(0, 0, this.canvasSize.w, this.canvasSize.h)
     },
 
     isCollision() {
+        let character, bullet
         for (let i = 0; i < this.characterArr.length; i++) {
-            let character = this.characterArr[i];
+            character = this.characterArr[i];
             for (let j = 0; j < this.bullets.length; j++) {
-                let bullet = this.bullets[j];
+                bullet = this.bullets[j];
                 if (character.position.x < bullet.bulletPos.x + bullet.bulletSize.w &&
                     character.position.x + character.characterSize.w > bullet.bulletPos.x &&
                     character.position.y < bullet.bulletPos.y + bullet.bulletSize.h &&
                     character.characterSize.h + character.position.y > bullet.bulletPos.y) {
+
+                    if (!bullet.toDelete && character.charType === 1) {
+                        this.player.lifes--;
+                        printLifes();
+                        playMeow();
+                    } else if (!bullet.toDelete && character.charType === 2) {
+                        sumScore();
+                        playExplosion();
+                    } else {
+                        this.remainingBullets += 25;
+                        printBullets();
+                        playReload();
+                    }
 
                     character.toDelete = true;
                     bullet.toDelete = true;
                 }
             }
         }
-    }
+    },
 
+    gameOver() {
+        clearInterval(this.intervalID);
+        this.clearAll();
+        this.ctx.font = '90px "Press Start 2P"';
+        this.ctx.fillText("GAME OVER", this.canvasSize.w / 12, this.canvasSize.h / 2);
+        pauseBGMusic();
+        playGameOver();
+    }
 
 }

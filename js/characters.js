@@ -10,8 +10,9 @@ class Characters {
         this.vel = 10
         this.position0 = posX
         this.imageInstance = new Image()
-        this.imageInstance.src = 'img/ufo.png'
-        this.toDelete = false;
+        this.imageInstance.src = ''
+        this.toDelete = false
+        this.charType
     }
 
     drawCharacter() {
@@ -22,4 +23,20 @@ class Characters {
         this.position.x += (this.vel * num);
     }
 
+    characterType() {
+        let num = Math.random();
+
+        if (num < .45) {
+            this.imageInstance.src = 'img/fox.png'
+            this.charType = 1;
+
+        } else if (num < .90) {
+            this.imageInstance.src = 'img/ufo.png'
+            this.charType = 2;
+
+        } else {
+            this.imageInstance.src = 'img/charger.png'
+            this.charType = 3;
+        }
+    }
 }

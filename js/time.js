@@ -1,19 +1,16 @@
 class Time {
 
-    constructor(frame) {
+    constructor() {
         this.currentTime = 0
-        this.frame = frame
 
     }
-    getTime() {
-        this.frames % 20 === 0 ? this.currentTime++ : null;
+    increaseTime() {
+        this.currentTime++;
     }
     getMinutes() {
-        this.getTime();
         return Math.floor(this.currentTime / 60);
     }
     getSeconds() {
-        this.getTime();
         if (this.currentTime === 0) {
             return 0;
         }

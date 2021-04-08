@@ -7,12 +7,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
 </head>
 
 <body>
 
-    <div id="score">
-        <p>Score: <span></span></p>
+    <div id="scoreContainer">
+        <p>Score: <span id="score">0</span></p>
+        <p>Bullets: <span id="bullets">100</span></p>
+        <button id="button">Start</button>
     </div>
     <canvas id="canvas" width="500" height="700"></canvas>
     <div id='time'>
@@ -22,7 +27,9 @@
             <span id="secDec"></span>
             <span id="secUni"></span>
         </p>
-        <p>Lifes: <span id="lifes"></span></p>
+        <p>Lifes:
+            <span id="lifes"></span>
+        </p>
     </div>
 
     <script src="./js/time.js"></script>
@@ -30,7 +37,6 @@
     <script src="./js/explosion.js"></script>
     <script src="./js/characters.js"></script>
     <script src="./js/player.js"></script>
-    <script src="./js/background.js"></script>
     <script src="./js/game.js"></script>
     <script src="./js/index.js"></script>
 
