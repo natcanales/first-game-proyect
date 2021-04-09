@@ -57,11 +57,13 @@ const game = {
     },
 
     reset() {
+        // filtramos los objetivos para quedarnos sólo con los que están en pantalla
         this.characterArr = this.characterArr.filter((char, i) => {
             if (!char.exploding && (char.position.x <= this.canvasSize.w) && (char.position.x > 0)) {
                 return true
             }
         })
+        // aquí se filtran los que tienen colisión y son marcados para borrar después
         this.explosions = this.explosions.filter((elm) => elm.finished === undefined) //filter
         let char
         for (let i = 0; i < this.characterArr.length; i++) {
@@ -76,14 +78,8 @@ const game = {
                 }
             }
         }
-
+        // y aquí las balas
         this.bullets = this.bullets.filter((elem) => !elem.toDelete)
-        // for (let i = 0; i < this.bullets.length; i++) {
-        //     let bullet = this.bullets[i];
-        //     if ((bullet.bulletPos.y < 0) || (bullet.toDelete === true)) {
-        //         this.bullets.splice(i, 1);
-        //     }
-        // }
     },
 
     setDimensions() {
@@ -102,7 +98,7 @@ const game = {
         document.onkeyup = e => {
             if (e.code === "Space") {
                 this.createBullets();
-                this.remainingBullets--
+                this.remainingBullets--;
                 printBullets();
             }
         }
